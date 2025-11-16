@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RPG.Timer
+namespace Trapped_Inside.Tools.Timer
 {
     public class Timer
     {
