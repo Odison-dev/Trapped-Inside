@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 
 public class LevelCloner : MonoBehaviour
 {
@@ -84,11 +85,15 @@ public class LevelCloner : MonoBehaviour
     
     private void PlaceRenderCube()
     {
-        
-        RenderCube.transform.localScale = new Vector3(1, 1, 1) * scale * scale * sidelength;
-        RenderCube.transform.position = Level.transform.position + PosOffset - Vector3.forward * 5 + Quaternion.Euler(0, 0, RotOffset.z) * PosOffset * scale;
-        
-        RenderCube.transform.eulerAngles = RotOffset * 2 + Vector3.forward * 180 + Level.transform.eulerAngles;
+        GameObject rc1 = Instantiate(RenderCube);
+        rc1.transform.localScale = Vector3.one * scale * sidelength;
+        rc1.transform.position = Level.transform.position + PosOffset - Vector3.forward * 5;
+        rc1.transform.eulerAngles = RotOffset + Vector3.forward * 180 + Level.transform.eulerAngles;
+
+
+        RenderCube.transform.localScale = Vector3.one / scale / scale * sidelength;
+        RenderCube.transform.position = (Level.transform.position - Quaternion.Euler(0, 0, -RotOffset.z) * PosOffset / scale) - Quaternion.Euler(0, 0, -RotOffset.z) * PosOffset / scale / scale + Vector3.forward * sidelength * 10;
+        RenderCube.transform.eulerAngles = -RotOffset * 2 + Vector3.forward * 180 + Level.transform.eulerAngles;
     }
 
     private void AdjustPlayer()
@@ -99,8 +104,9 @@ public class LevelCloner : MonoBehaviour
         {
 
             TransformGameobj("upper", Player.transform, Player.transform);
-            Player.GetComponent<Rigidbody2D>().velocity /= scale;
+            Player.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, -RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity / scale;
             Player.GetComponent<Rigidbody2D>().gravityScale /= scale;
+            Physics2D.gravity = Quaternion.Euler(0, 0, -RotOffset.z) * Physics2D.gravity;
             //Player.transform = player_b.transform; 
         }
         if (IsInBig())
@@ -108,6 +114,7 @@ public class LevelCloner : MonoBehaviour
             TransformGameobj("lower", Player.transform, Player.transform);
             Player.GetComponent<Rigidbody2D>().velocity *= scale;
             Player.GetComponent<Rigidbody2D>().gravityScale *= scale;
+            Physics2D.gravity = Quaternion.Euler(0, 0, RotOffset.z) * Physics2D.gravity;
         }
     }
 
@@ -115,7 +122,7 @@ public class LevelCloner : MonoBehaviour
     {
         Vector2 distance = Player.transform.position - clone_s.transform.position;
         Vector2 new_vector = new Vector2(distance.x * Mathf.Cos(RotOffset.z) - distance.y * Mathf.Sin(RotOffset.z), distance.x * Mathf.Sin(RotOffset.z) + distance.y * Mathf.Cos(RotOffset.z));
-        if (new_vector.magnitude < sidelength * scale / 2)
+        if (new_vector.magnitude < (sidelength * scale - constants.MonoScale) / 2)
         {
             return true;
         }
@@ -149,13 +156,21 @@ public class LevelCloner : MonoBehaviour
             objTransform.transform.position = Quaternion.Euler(0, 0, RotOffset.z) * (originObj.transform.position - Level.transform.position) * scale + PosOffset + Level.transform.position;
             objTransform.transform.localScale = originObj.transform.localScale * scale;
             objTransform.transform.eulerAngles = originObj.transform.eulerAngles + RotOffset;
-            
+            //if (objTransform.GetComponent<Rigidbody2D>() != null && originObj.GetComponent<Rigidbody2D>() != null)
+            //{
+                
+            //    objTransform.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, -RotOffset.z) * originObj.GetComponent<Rigidbody2D>().velocity / scale;
+            //}
         }
         else if (type == "upper")
         {
             objTransform.transform.position = Quaternion.Euler(0, 0, -RotOffset.z) * (originObj.transform.position - Level.transform.position) / scale + Level.transform.position - Quaternion.Euler(0, 0, -RotOffset.z) * (PosOffset / scale);
             objTransform.transform.localScale = originObj.transform.localScale / scale;
             objTransform.transform.eulerAngles = originObj.transform.eulerAngles - RotOffset;
+            //if (objTransform.GetComponent<Rigidbody2D>() != null && originObj.GetComponent<Rigidbody2D>() != null)
+            //{
+            //    objTransform.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, RotOffset.z) * originObj.GetComponent<Rigidbody2D>().velocity * scale;
+            //}
         }
         //return objTransform;
     }
