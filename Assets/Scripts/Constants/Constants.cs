@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class Constants : ScriptableObject
 {
-    [Header("缩放")]
+    [Header("变换")]
     public float MonoScale = 5f;
+    public Vector3 PosOffset = new Vector3 (0, 0, 0);
+    public float Rotoffset = 0f;
+    public float AllScale = .33f;
 
     [Header("移动相关参数")]
     public float MaxWalkSpeed = 40f;

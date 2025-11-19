@@ -7,12 +7,15 @@ using System.Security.Cryptography;
 
 public class LevelCloner : MonoBehaviour
 {
-    [Header("变换相关参数")]
-    public float scale = .4f;
+    //[Header("变换相关参数")]
+    //public float scale = .4f;
+    private float scale;
     public float sidelength = 8;
     public GameObject center;
-    public Vector3 RotOffset = Vector3.zero;
-    public Vector3 PosOffset = Vector3.zero;
+    //public Vector3 RotOffset = Vector3.zero;
+    //public Vector3 PosOffset = Vector3.zero;
+    private Vector3 PosOffset;
+    private Vector3 RotOffset;
     [Header("关卡对象")]
     public GameObject Level;
     public GameObject Player;
@@ -35,6 +38,11 @@ public class LevelCloner : MonoBehaviour
 
     private void Start()
     {
+        constants = new Constants();
+        PosOffset = constants.PosOffset;
+        RotOffset = new Vector3(0, 0, constants.Rotoffset);
+        scale = constants.AllScale;
+
         player_s = Instantiate(Player.gameObject);
         
         player_b = Instantiate(Player.gameObject);
@@ -42,7 +50,7 @@ public class LevelCloner : MonoBehaviour
         
         clone_s = Instantiate(Level.gameObject);
         clone_b = Instantiate(Level.gameObject);
-        constants = new Constants();
+        
         RenderCube = GameObject.Find("Renderer");
         CloneLevel();
         ClonePlayer();
@@ -51,15 +59,8 @@ public class LevelCloner : MonoBehaviour
     }
     private void Update()
     {
-        
         AdjustPlayer();
     }
-
-
-
-    
-
-
     //
     private void CloneLevel()
     {
@@ -122,7 +123,7 @@ public class LevelCloner : MonoBehaviour
     {
         Vector2 distance = Player.transform.position - clone_s.transform.position;
         Vector2 new_vector = new Vector2(distance.x * Mathf.Cos(RotOffset.z) - distance.y * Mathf.Sin(RotOffset.z), distance.x * Mathf.Sin(RotOffset.z) + distance.y * Mathf.Cos(RotOffset.z));
-        if (new_vector.magnitude < (sidelength * scale - constants.MonoScale) / 2)
+        if (new_vector.magnitude < sidelength / 2)
         {
             return true;
         }

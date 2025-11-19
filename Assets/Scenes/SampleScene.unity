@@ -166,11 +166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9ab36a47c96446449ffdc5e5185441c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scale: 0.4
   sidelength: 80
   center: {fileID: 0}
-  RotOffset: {x: 0, y: 0, z: 25}
-  PosOffset: {x: 0, y: 0, z: 0}
   Level: {fileID: 555393624}
   Player: {fileID: 841393155}
   RenderCube: {fileID: 1298777276}
@@ -528,7 +525,7 @@ Transform:
   m_GameObject: {fileID: 841393155}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.9, y: 18.3, z: 0}
+  m_LocalPosition: {x: 12.2, y: 34.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -583,7 +580,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 841393155}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 5e709586c261cd646ab2cff259845488, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -640,7 +637,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6098202311582266585, guid: 1df338abb0392bc4792e212d7e404c7c, type: 3}
       propertyPath: m_LocalScale.x
-      value: 4
+      value: 2.3345551
       objectReference: {fileID: 0}
     - target: {fileID: 6098202311582266585, guid: 1df338abb0392bc4792e212d7e404c7c, type: 3}
       propertyPath: m_LocalScale.y
@@ -648,7 +645,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6098202311582266585, guid: 1df338abb0392bc4792e212d7e404c7c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2
+      value: -2.83273
       objectReference: {fileID: 0}
     - target: {fileID: 6098202311582266585, guid: 1df338abb0392bc4792e212d7e404c7c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -725,6 +722,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 2488859618945303147, guid: 1df338abb0392bc4792e212d7e404c7c, type: 3}
+    - {fileID: 6613488455871550869, guid: 1df338abb0392bc4792e212d7e404c7c, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1df338abb0392bc4792e212d7e404c7c, type: 3}
