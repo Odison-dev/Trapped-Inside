@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.ComponentModel.Design;
 
 public class LevelCloner : MonoBehaviour
 {
@@ -19,20 +20,21 @@ public class LevelCloner : MonoBehaviour
     [Header("关卡对象")]
     public GameObject Level;
     public GameObject Player;
+    public GameObject PlayerPre;
     [Header("渲染")]
     public GameObject RenderCube;
 
     private Constants constants;
-    
 
+    //public GameObject check;
 
     //委托
     public delegate void LevelTransform();
     public static event LevelTransform TransformLevel;
     private GameObject player_s;
-    private GameObject clone_s;
+    public GameObject clone_s;
     private GameObject player_b;
-    private GameObject clone_b;
+    public GameObject clone_b;
     //GameObject player_s = Instantiate(Player);
 
 
@@ -43,9 +45,9 @@ public class LevelCloner : MonoBehaviour
         RotOffset = new Vector3(0, 0, constants.Rotoffset);
         scale = constants.AllScale;
 
-        player_s = Instantiate(Player.gameObject);
+        player_s = Instantiate(PlayerPre);
         
-        player_b = Instantiate(Player.gameObject);
+        player_b = Instantiate(PlayerPre);
         
         
         clone_s = Instantiate(Level.gameObject);
@@ -101,56 +103,76 @@ public class LevelCloner : MonoBehaviour
     {
         TransformGameobj("lower", player_s.transform, Player.transform);
         TransformGameobj("upper", player_b.transform, Player.transform);
-        if (IsInSmall())
-        {
+        //if (check.GetComponent<CheckIsInABox>().enter)
+        //{
 
-            TransformGameobj("upper", Player.transform, Player.transform);
-            Player.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, -RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity / scale;
-            Player.GetComponent<Rigidbody2D>().gravityScale /= scale;
-            Physics2D.gravity = Quaternion.Euler(0, 0, -RotOffset.z) * Physics2D.gravity;
-            //Player.transform = player_b.transform; 
-        }
-        if (IsInBig())
-        {
-            TransformGameobj("lower", Player.transform, Player.transform);
-            Player.GetComponent<Rigidbody2D>().velocity *= scale;
-            Player.GetComponent<Rigidbody2D>().gravityScale *= scale;
-            Physics2D.gravity = Quaternion.Euler(0, 0, RotOffset.z) * Physics2D.gravity;
-        }
+        //    TransformGameobj("upper", Player.transform, Player.transform);
+        //    Player.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, -RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity / scale;
+        //    Player.GetComponent<Rigidbody2D>().gravityScale /= scale;
+        //    Physics2D.gravity = Quaternion.Euler(0, 0, -RotOffset.z) * Physics2D.gravity;
+        //    //Player.transform = player_b.transform; 
+        //}
+        //if (check.GetComponent<CheckIsInABox>().exit)
+        //{
+        //TransformGameobj("lower", Player.transform, Player.transform);
+        //Player.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity * scale;
+        //Player.GetComponent<Rigidbody2D>().gravityScale *= scale;
+        //Physics2D.gravity = Quaternion.Euler(0, 0, RotOffset.z) * Physics2D.gravity;
+        //}
     }
+
+    public void adb()
+    {
+        TransformGameobj("upper", Player.transform, Player.transform);
+        Player.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, -RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity / scale;
+        Player.GetComponent<Rigidbody2D>().gravityScale /= scale;
+        Physics2D.gravity = Quaternion.Euler(0, 0, -RotOffset.z) * Physics2D.gravity;
+    }
+    public void ads()
+    {
+        TransformGameobj("lower", Player.transform, Player.transform);
+        Player.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity * scale;
+        Player.GetComponent<Rigidbody2D>().gravityScale *= scale;
+        Physics2D.gravity = Quaternion.Euler(0, 0, RotOffset.z) * Physics2D.gravity;
+    }
+
 
     private bool IsInSmall()
     {
-        Vector2 distance = Player.transform.position - clone_s.transform.position;
-        Vector2 new_vector = new Vector2(distance.x * Mathf.Cos(RotOffset.z) - distance.y * Mathf.Sin(RotOffset.z), distance.x * Mathf.Sin(RotOffset.z) + distance.y * Mathf.Cos(RotOffset.z));
-        if (new_vector.magnitude < sidelength / 2)
-        {
-            return true;
-        }
+        //Vector2 distance = Player.transform.position - clone_s.transform.position;
+        //Vector2 new_vector = new Vector2(distance.x * Mathf.Cos(RotOffset.z) - distance.y * Mathf.Sin(RotOffset.z), distance.x * Mathf.Sin(RotOffset.z) + distance.y * Mathf.Cos(RotOffset.z));
+        //if (Mathf.Abs(Mathf.Acos(Vector2.Dot(distance, clone_s.transform.up) / (distance.magnitude * clone_s.transform.up.magnitude))) < 45)
+        //{
+        //    if (Mathf.Abs(Vector2.Dot(distance, clone_s.transform.up)) < sidelength * scale / 2) { return true; }
 
+
+        //}
+        //if (Mathf.Abs(Mathf.Acos(Vector2.Dot(distance, clone_s.transform.right) / (distance.magnitude * clone_s.transform.right.magnitude))) < 45)
+        //{
+        //    if (Mathf.Abs(Vector2.Dot(distance, clone_s.transform.right)) < sidelength * scale / 2) { return true; }
+        //}
+        ////return false;
+        ////if (check.gameOb)
         return false;
+        //return check.GetComponent<CheckIsInABox>().enter;
     }
-
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        
+    }
     private bool IsInBig()
     {
         Vector2 distance = Player.transform.position - Level.transform.position;
-
-        if (Mathf.Abs(Mathf.Acos(Vector2.Dot(distance, Level.transform.up) / (distance.magnitude * Level.transform.up.magnitude))) < 45) 
+        if (distance.x < -sidelength / 2)
         {
-            if (Mathf.Abs(Vector2.Dot(distance, Level.transform.up))> sidelength / 2) { return true; }
-            
-
+            return true;
         }
-        if (Mathf.Abs(Mathf.Acos(Vector2.Dot(distance, Level.transform.right) / (distance.magnitude * Level.transform.right.magnitude))) < 45)
-        {
-            if (Mathf.Abs(Vector2.Dot(distance, Level.transform.right)) > sidelength / 2) { return true; }
+        //print(Mathf.Sin(90));
 
-
-        }
         return false;
     }
 
-    private void TransformGameobj(string type, Transform objTransform,Transform originObj)
+    public void TransformGameobj(string type, Transform objTransform,Transform originObj)
     {
         if (type == "lower")
         {
