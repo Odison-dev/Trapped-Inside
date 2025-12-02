@@ -2,26 +2,42 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Net.NetworkInformation;
+using Trapped_Inside.Tools.Timer;
 using Unity.Mathematics;
 using UnityEditor;
 
 //using Trapped_Inside.Constants;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.VirtualTexturing;
+using static UnityEditor.PlayerSettings;
 
 public class PlayerController : MonoBehaviour
 {
+    //private TimerManager timerManager;
     public GameObject player;
+    public GameObject GroundDetector;
     public PlayerInputController inputController;
     public float SlopeCheckDistance = 1f;
     public LayerMask GroundLayer;
+    public GameObject consts;
     // Start is called before the first frame update
-    private Constants constants;
+    //private Constants constants;
+    private Consts constants;
+    
     private Rigidbody2D rb;
     private CapsuleCollider2D collider;
+
     public Vector2 direction;
     private Vector2 velocity = Vector2.zero;
     private Vector2 SpaceBase = Vector2.zero;
+
+    private float slopeangle;
+    private Vector2 slopeNormalPerp;
+
+    [Header("光滑物理材质")]
+    public PhysicsMaterial2D smooth;
 
     //一些判断
     private bool IsGrounded;             //是否落地
@@ -31,12 +47,17 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        constants = new Constants();
+        //timerManager = new TimerManager();
+        //timerManager.Start("check", 5f);s
+        constants = consts.GetComponent<Consts>();
         inputController = new PlayerInputController();
+        //GroundDetector = transform.GetChild(0).gameObject;
         rb = GetComponent<Rigidbody2D>();
         collider = GetComponent<CapsuleCollider2D>();
         transform.localScale = Vector3.one * constants.MonoScale;
         rb.gravityScale = constants.Gravity;
+
+        //IsGrounded = GroundDetector.GetComponent<GroundDetect>().IsGrounded;
 
         inputController.PlayerMovement.Jump.started += Jump;
     }
@@ -64,13 +85,17 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("bar"))
         {
+            
             Vector3 closestPos = collision.collider.ClosestPoint(transform.position);
             SlopeCheckVertical(closestPos);
         }
+        
     }
+
+    
     private void FixedUpdate()
     {
-        CheckGround();
+        //CheckGround();
         ApplyMovement();
         
     }
@@ -81,15 +106,33 @@ public class PlayerController : MonoBehaviour
         velocity = Quaternion.Euler(0, 0, -constants.Rotoffset * scalelevel) * rb.velocity;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         
-        if (direction != Vector2.zero)
+        if (IsGrounded)
         {
-            velocity = new Vector2(direction.x * constants.MaxWalkSpeed * Mathf.Abs(transform.localScale.x / constants.MonoScale), velocity.y) ;
+            if (direction != Vector2.zero)
+            {
+                velocity = new Vector2(direction.x * constants.MaxWalkSpeed * Mathf.Abs(transform.localScale.x / constants.MonoScale), velocity.y);
+            }
+            //else
+            //{
+                
+            //}
         }
-        //else
-        //{
-            
-        //}
-        rb.velocity = Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * velocity;
+        
+        else
+        {
+            if (direction != Vector2.zero)
+            {
+                velocity = new Vector2(direction.x * constants.MaxWalkSpeed * Mathf.Abs(transform.localScale.x / constants.MonoScale), velocity.y);
+            }
+            else
+            {
+                if (velocity.x > 0)
+                {
+                    //velocity.x = 3;
+                }
+            }
+        }
+            rb.velocity = Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * velocity;
        
     }
 
@@ -111,21 +154,46 @@ public class PlayerController : MonoBehaviour
         float scalelevel = Mathf.Log(Mathf.Abs(player.transform.localScale.x / constants.MonoScale), constants.AllScale);
 
         RaycastHit2D hit = Physics2D.Raycast(pos, Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * Vector2.down, SlopeCheckDistance * constants.MonoScale, GroundLayer);
-        if (hit)
+        
         {
-            Debug.DrawRay(hit.point, hit.normal * 100, Color.green);
+            if (hit)
+            {
+                slopeNormalPerp = Vector2.Perpendicular(hit.normal).normalized;
+                //if (hit.normal.)
+                if (Vector3.Cross(transform.up, hit.normal).normalized == -transform.forward)
+                {
+                    slopeangle = Vector2.Angle(hit.normal, Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * Vector2.up) * -1;
+                }
+                else if (Vector3.Cross(transform.up, hit.normal).normalized == transform.forward)
+                {
+                    slopeangle = Vector2.Angle(hit.normal, Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * Vector2.up);
+                }
+                //slopeangle = Vector2.Angle(hit.normal, Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * Vector2.up);
+                Debug.DrawRay(hit.point, hit.normal * 100, Color.green);
+                if (slopeangle != 0)
+                {
+                    IsOnSlope = true;
+
+                }
+                else
+                {
+                    IsOnSlope = false;
+                }
+            }
         }
+            
     }
 
     private void Jump(InputAction.CallbackContext obj)
     {
         float scalelevel = Mathf.Log(Mathf.Abs(player.transform.localScale.x / constants.MonoScale), constants.AllScale);
-        rb.AddForce(Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * Vector2.up * constants.JumpForce * Mathf.Pow(constants.AllScale, scalelevel), ForceMode2D.Impulse);
+        if (GroundDetector.GetComponent<GroundDetect>().IsGrounded)
+        {
+            
+            rb.AddForce(Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * Vector2.up * constants.JumpForce * Mathf.Pow(constants.AllScale, scalelevel), ForceMode2D.Impulse);
+        }
 
 
     }
-    private void CheckGround()
-    {
-       //TODO
-    }
+    
 }

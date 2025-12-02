@@ -8,11 +8,11 @@ using System.ComponentModel.Design;
 
 public class LevelCloner : MonoBehaviour
 {
-    //[Header("变换相关参数")]
+    [Header("变换相关参数")]
     //public float scale = .4f;
     private float scale;
-    public float sidelength = 8;
-    public GameObject center;
+    private float sidelength = 8;
+    public GameObject consts;
     //public Vector3 RotOffset = Vector3.zero;
     //public Vector3 PosOffset = Vector3.zero;
     private Vector3 PosOffset;
@@ -24,7 +24,8 @@ public class LevelCloner : MonoBehaviour
     [Header("渲染")]
     public GameObject RenderCube;
 
-    private Constants constants;
+    //private Constants constants;
+    private Consts constants;
 
     //public GameObject check;
 
@@ -40,16 +41,17 @@ public class LevelCloner : MonoBehaviour
 
     private void Start()
     {
-        constants = new Constants();
+        constants = consts.GetComponent<Consts>();
         PosOffset = constants.PosOffset;
         RotOffset = new Vector3(0, 0, constants.Rotoffset);
         scale = constants.AllScale;
 
         player_s = Instantiate(PlayerPre);
-        
+        player_s.GetComponent<Rigidbody2D>().isKinematic = true;
+
         player_b = Instantiate(PlayerPre);
-        
-        
+        //player_b.GetComponent<Rigidbody2D>().isKinematic = true;
+
         clone_s = Instantiate(Level.gameObject);
         clone_b = Instantiate(Level.gameObject);
         
@@ -95,7 +97,7 @@ public class LevelCloner : MonoBehaviour
 
 
         RenderCube.transform.localScale = Vector3.one / scale / scale * sidelength;
-        RenderCube.transform.position = (Level.transform.position - Quaternion.Euler(0, 0, -RotOffset.z) * PosOffset / scale) - Quaternion.Euler(0, 0, -RotOffset.z) * PosOffset / scale / scale + Vector3.forward * sidelength * 10;
+        RenderCube.transform.position = (Level.transform.position - Quaternion.Euler(0, 0, -RotOffset.z) * PosOffset / scale) - Quaternion.Euler(0, 0, -RotOffset.z * 2) * PosOffset / Mathf.Pow(scale, 2) + Vector3.forward * sidelength * 10;
         RenderCube.transform.eulerAngles = -RotOffset * 2 + Vector3.forward * 180 + Level.transform.eulerAngles;
     }
 
