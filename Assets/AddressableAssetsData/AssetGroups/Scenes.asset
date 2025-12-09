@@ -22,7 +22,22 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 538145380bc396a4cbd1d47ca9b9518d
+  - m_GUID: 4c65e42b9e77fb847afbc62b40f81010
+    m_Address: Assets/Scenes/4.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 66e8b87ab7f904c4bab0b224a1800828
+    m_Address: Assets/Scenes/3.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9bac6540c48e7274f9adc906c3ce613a
+    m_Address: Assets/Scenes/1.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a4e1a483357286342b26359e8160f419
     m_Address: Assets/Scenes/2.unity
     m_ReadOnly: 0
     m_SerializedLabels: []

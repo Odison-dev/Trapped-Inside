@@ -6,6 +6,7 @@ TagManager:
   tags:
   - player
   - bar
+  - gameobj
   layers:
   - Default
   - TransparentFX
