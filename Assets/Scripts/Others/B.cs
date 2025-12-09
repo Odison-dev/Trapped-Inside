@@ -7,9 +7,10 @@ public class B : MonoBehaviour
     public GameObject levelcloner;
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.name == "Circle")
+        if (collision.gameObject.name == "Circle"  || collision.gameObject.name == "Anti-cube")
         {
-            levelcloner.GetComponent<LevelCloner>().ads();
+            levelcloner.GetComponent<LevelCloner>().ads(collision.gameObject);
         }
+        //levelcloner.GetComponent<LevelCloner>().ads(collision.gameObject);
     }
 }

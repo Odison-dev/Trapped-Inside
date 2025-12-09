@@ -10,7 +10,7 @@ public class ButtonPress : MonoBehaviour
     public GameScene sceneToGo;
     public Vector3 pos;
 
-    public Animator transition;
+    //public Animator transition;
 
 
     //public void 
@@ -19,10 +19,10 @@ public class ButtonPress : MonoBehaviour
         Debug.Log("changing scenes");
         
         loadEvent.LoadRequestEvent(sceneToGo, pos, true);
-        if (transition != null)
-        {
-            transition.SetTrigger("Start");
-        }
+        //if (transition != null)
+        //{
+        //    transition.SetTrigger("Start");
+        //}
         //this.GetComponent<Button>().interactable = false;
     }
 }

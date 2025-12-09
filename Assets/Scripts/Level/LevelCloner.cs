@@ -1,10 +1,12 @@
-using UnityEngine;
-using System.Collections.Generic;
 using JetBrains.Annotations;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using System.ComponentModel.Design;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelCloner : MonoBehaviour
 {
@@ -21,6 +23,8 @@ public class LevelCloner : MonoBehaviour
     public GameObject Level;
     public GameObject Player;
     public GameObject PlayerPre;
+    public GameObject Key;
+    public GameObject KeyPre;
     [Header("‰÷»æ")]
     public GameObject RenderCube;
 
@@ -34,8 +38,10 @@ public class LevelCloner : MonoBehaviour
     public static event LevelTransform TransformLevel;
     private GameObject player_s;
     public GameObject clone_s;
+    //private GameObject key_s;
     private GameObject player_b;
     public GameObject clone_b;
+    //private GameObject key_b;
     //GameObject player_s = Instantiate(Player);
 
 
@@ -48,23 +54,46 @@ public class LevelCloner : MonoBehaviour
 
         player_s = Instantiate(PlayerPre);
         player_s.GetComponent<Rigidbody2D>().isKinematic = true;
+        SceneManager.MoveGameObjectToScene(player_s, gameObject.scene);
 
         player_b = Instantiate(PlayerPre);
+        SceneManager.MoveGameObjectToScene(player_b, gameObject.scene);
         //player_b.GetComponent<Rigidbody2D>().isKinematic = true;
 
         clone_s = Instantiate(Level.gameObject);
         clone_b = Instantiate(Level.gameObject);
+        SceneManager.MoveGameObjectToScene(clone_s, gameObject.scene);
+        SceneManager.MoveGameObjectToScene(clone_b, gameObject.scene);
+
+
         
+        //key_s = Instantiate(Key);
+        //SceneManager.MoveGameObjectToScene(key_s, gameObject.scene);
+        //key_b = Instantiate(Key);
+        //SceneManager.MoveGameObjectToScene(key_b, gameObject.scene);
+
+
         RenderCube = GameObject.Find("Renderer");
         CloneLevel();
-        ClonePlayer();
+        
         PlaceRenderCube();
         
     }
     private void Update()
     {
         AdjustPlayer();
+        ClonePlayer();
+        //AdjustKey();
     }
+
+    //private void AdjustKey()
+    //{
+    //    TransformGameobj("lower", key_s.transform, Key.transform);
+    //    //key_s.transform.position = Quaternion.Euler(0, 0, RotOffset.z) * (Key.transform.position - Level.transform.position) * scale + PosOffset + Level.transform.position;
+    //    //key_b.transform.position = Quaternion.Euler(0, 0, -RotOffset.z) * (Key.transform.position - Level.transform.position) / scale + Level.transform.position - Quaternion.Euler(0, 0, -RotOffset.z) * (PosOffset / scale);
+    //    TransformGameobj("upper", key_b.transform, Key.transform);
+    //}
+
     //
     private void CloneLevel()
     {
@@ -80,17 +109,21 @@ public class LevelCloner : MonoBehaviour
 
     private void ClonePlayer()
     {
-        //GameObject player_s = Instantiate(Player.gameObject);
+        
+        //player_s = Instantiate(Player.gameObject);
         TransformGameobj("lower", player_s.transform, Player.transform);
+        //Destroy(player_s);
 
 
-        //GameObject player_b = Instantiate(Player.gameObject);
+        //player_b = Instantiate(Player.gameObject);
         TransformGameobj("upper", player_b.transform, Player.transform);
+        //Destroy(player_b);
     }
     
     private void PlaceRenderCube()
     {
         GameObject rc1 = Instantiate(RenderCube);
+        SceneManager.MoveGameObjectToScene(rc1, gameObject.scene);
         rc1.transform.localScale = Vector3.one * scale * sidelength;
         rc1.transform.position = Level.transform.position + PosOffset - Vector3.forward * 5;
         rc1.transform.eulerAngles = RotOffset + Vector3.forward * 180 + Level.transform.eulerAngles;
@@ -105,6 +138,8 @@ public class LevelCloner : MonoBehaviour
     {
         TransformGameobj("lower", player_s.transform, Player.transform);
         TransformGameobj("upper", player_b.transform, Player.transform);
+
+        //Player.transform.localScale = 
         //if (check.GetComponent<CheckIsInABox>().enter)
         //{
 
@@ -123,18 +158,18 @@ public class LevelCloner : MonoBehaviour
         //}
     }
 
-    public void adb()
+    public void adb(GameObject gameObject)
     {
-        TransformGameobj("upper", Player.transform, Player.transform);
-        Player.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, -RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity / scale;
-        Player.GetComponent<Rigidbody2D>().gravityScale /= scale;
+        TransformGameobj("upper", gameObject.transform, gameObject.transform);
+        gameObject.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, -RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity / scale;
+        gameObject.GetComponent<Rigidbody2D>().gravityScale /= scale;
         Physics2D.gravity = Quaternion.Euler(0, 0, -RotOffset.z) * Physics2D.gravity;
     }
-    public void ads()
+    public void ads(GameObject gameObject)
     {
-        TransformGameobj("lower", Player.transform, Player.transform);
-        Player.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity * scale;
-        Player.GetComponent<Rigidbody2D>().gravityScale *= scale;
+        TransformGameobj("lower", gameObject.transform, gameObject.transform);
+        gameObject.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity * scale;
+        gameObject.GetComponent<Rigidbody2D>().gravityScale *= scale;
         Physics2D.gravity = Quaternion.Euler(0, 0, RotOffset.z) * Physics2D.gravity;
     }
 
@@ -174,6 +209,7 @@ public class LevelCloner : MonoBehaviour
         return false;
     }
 
+    //public Transform TransformGameobj(string type, Transform objTransform,Transform originObj)
     public void TransformGameobj(string type, Transform objTransform,Transform originObj)
     {
         if (type == "lower")

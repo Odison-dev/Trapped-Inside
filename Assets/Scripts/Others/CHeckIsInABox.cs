@@ -25,7 +25,7 @@ public class CheckIsInABox : MonoBehaviour
         if (collision.gameObject.tag == "player")
         {
             //Debug.Log(collision.gameObject.name);
-            levelcloner.GetComponent<LevelCloner>().ads();
+            levelcloner.GetComponent<LevelCloner>().ads(collision.gameObject);
         }
         
     }

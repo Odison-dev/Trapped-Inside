@@ -1,25 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
-using Trapped_Inside.Tools.Timer;
+using System.Drawing;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
+using Image = UnityEngine.UI.Image;
 
 public class RingTimer : MonoBehaviour
 {
-    private TimerManager timerManager;
+    public Image ring;
+    public GameObject flag;
+    public GameObject constants;
     // Start is called before the first frame update
     void Start()
     {
-        timerManager = new TimerManager();
+        //ring = GetComponent<Image>();   
     }
 
     // Update is called once per frame
-    private void OnTriggerStay2D(Collider2D collision)
+    void Update()
     {
-        Loading();
-    }
-
-    private void Loading()
-    {
-
+        ring.fillAmount = flag.GetComponent<Flag>().timer / constants.GetComponent<Consts>().WinTimer;
     }
 }

@@ -5,11 +5,12 @@ using UnityEngine;
 public class A : MonoBehaviour
 {
     public GameObject levelcloner;
-    private Constants constants;
+    private Consts constants;
+    public GameObject consts;
     //public GameObject Level;
     private void Start()
     {
-        constants = new Constants();
+        constants = consts.GetComponent<Consts>();
         transform.position += constants.PosOffset;
         transform.eulerAngles += new Vector3(0, 0, constants.Rotoffset);
         transform.localScale *= constants.AllScale * .99f;
@@ -18,9 +19,10 @@ public class A : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.name == "Circle")
+        //levelcloner.GetComponent<LevelCloner>().adb(collision.gameObject);
+        if (collision.gameObject.name == "Circle" || collision.gameObject.name == "Anti-cube")
         {
-            levelcloner.GetComponent<LevelCloner>().adb();
+            levelcloner.GetComponent<LevelCloner>().adb(collision.gameObject);
         }
     }
 }

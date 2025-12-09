@@ -14,7 +14,7 @@ public class LevelChooser : MonoBehaviour
     [Header("¹Ø¿¨²ÎÊý")]
     public GameScene levelToGo;
     public Vector3 posToGo = Vector3.zero;
-    public Animator transition;
+    //public Animator transition;
 
     private void OnEnable()
     {
@@ -29,7 +29,7 @@ public class LevelChooser : MonoBehaviour
 
     public void IntoTheGame()
     {
-        transition.SetTrigger("Start");
+        //transition.SetTrigger("Start");
         loadEvent.LoadRequestEvent(levelToGo, posToGo, true);
     }
 }

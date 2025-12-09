@@ -11,42 +11,50 @@ public class SceneLoader : MonoBehaviour
     [Header("事件监听")]
     public SceneLoadEvent loadEvent;
     public GameScene firstloadscene;
+    
     public VoidEvent Level1;
 
     [Header("事件广播")]
     public SceneTransition transition;
+    public VoidEvent afterSceneLoaded;
 
-
-    [SerializeField] private GameScene currentLoadedScene;
+    private GameScene currentLoadedScene;
     private GameScene sceneToLoad;
     private Vector3 positionToGo;
     private bool sceneTransition;
+    //private bool loading = true;
     private bool loading;
+    private bool isFirstScene = true;
     public float fadeTime;
      
     //public float fadeTimeIn;
     private void Awake()
     {
         //Addressables.LoadSceneAsync(firstloadscene.sceneReference, LoadSceneMode.Additive);
-        currentLoadedScene = firstloadscene;
-        currentLoadedScene.sceneReference.LoadSceneAsync(LoadSceneMode.Additive);
+        //currentLoadedScene = firstloadscene;
+        //currentLoadedScene.sceneReference.LoadSceneAsync(LoadSceneMode.Additive);
     }
 
+    private void Start()
+    {
+        Level();
+    }
     private void OnEnable()
     {
         loadEvent.LoadRequestEvent += OnLoadRequestEvent;
-        //Level1.OnEventRaised += ;
+        //Level1.OnEventRaised += Level;
     }
 
     private void OnDisable()
     {
         loadEvent.LoadRequestEvent -= OnLoadRequestEvent;
-        //Level1.OnEventRaised -=;
+        //Level1.OnEventRaised -= Level;
     }
 
     private void Level()
     {
-
+        sceneToLoad = firstloadscene;
+        OnLoadRequestEvent(sceneToLoad, positionToGo, true);
     }
 
 
@@ -66,7 +74,11 @@ public class SceneLoader : MonoBehaviour
             Debug.Log("xxx");
             StartCoroutine(UnloadPreviousScene());
         }
-
+        else
+        {
+            isFirstScene = false;
+            LoadNewScene();
+        }
 
         //Debug.Log(sceneToLoad.sceneReference.SubObjectName);
     }
@@ -86,6 +98,8 @@ public class SceneLoader : MonoBehaviour
 
     private void LoadNewScene()
     {
+
+        Debug.Log(sceneToLoad);
         var loadingOption = sceneToLoad.sceneReference.LoadSceneAsync(LoadSceneMode.Additive, true);
         loadingOption.Completed += OnLoadCompleted;
     }
@@ -99,5 +113,9 @@ public class SceneLoader : MonoBehaviour
         }
 
         loading = false;
+
+
+        //呼叫场景加载内容
+        afterSceneLoaded.RaiseEvent();
     }
 }

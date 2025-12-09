@@ -5,6 +5,7 @@ using System.Data;
 using System.Net.NetworkInformation;
 using Trapped_Inside.Tools.Timer;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEditor;
 
 //using Trapped_Inside.Constants;
@@ -22,21 +23,27 @@ public class PlayerController : MonoBehaviour
     public float SlopeCheckDistance = 1f;
     public LayerMask GroundLayer;
     public GameObject consts;
+    public Transform playerTrans;
     // Start is called before the first frame update
     //private Constants constants;
     private Consts constants;
-    
+    private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
+    //private CompositeCollider2D collider;
     private CapsuleCollider2D collider;
 
     public Vector2 direction;
+    public float faceDir = 1;
     private Vector2 velocity = Vector2.zero;
     private Vector2 SpaceBase = Vector2.zero;
+    private Vector2 a = Vector2.zero;
+    private float k = 0f;
 
     private float slopeangle;
     private Vector2 slopeNormalPerp;
 
-    [Header("光滑物理材质")]
+    [Header("物理材质")]
+    public PhysicsMaterial2D normal;
     public PhysicsMaterial2D smooth;
 
     //一些判断
@@ -50,13 +57,16 @@ public class PlayerController : MonoBehaviour
         //timerManager = new TimerManager();
         //timerManager.Start("check", 5f);s
         constants = consts.GetComponent<Consts>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         inputController = new PlayerInputController();
         //GroundDetector = transform.GetChild(0).gameObject;
         rb = GetComponent<Rigidbody2D>();
+        //collider = GetComponent<CompositeCollider2D>();
         collider = GetComponent<CapsuleCollider2D>();
-        transform.localScale = Vector3.one * constants.MonoScale;
+        transform.localScale = new Vector3 (faceDir, 1, 1) * constants.MonoScale;
         rb.gravityScale = constants.Gravity;
 
+        //playerTrans = gameObject.AddComponent<Transform>();
         //IsGrounded = GroundDetector.GetComponent<GroundDetect>().IsGrounded;
 
         inputController.PlayerMovement.Jump.started += Jump;
@@ -75,6 +85,12 @@ public class PlayerController : MonoBehaviour
     {
         inputController.Disable();
     }
+
+
+   
+
+
+
     void Update()
     {
         direction = inputController.PlayerMovement.Move.ReadValue<Vector2>();
@@ -83,16 +99,22 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("bar"))
+        if (collision.gameObject.CompareTag("bar") || collision.gameObject.CompareTag("gameobj"))
         {
             
-            Vector3 closestPos = collision.collider.ClosestPoint(transform.position);
-            SlopeCheckVertical(closestPos);
+            Vector3 normal = collision.GetContact(0).normal;
+            SlopeCheck(normal);
         }
         
     }
 
-    
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        IsOnSlope = false;
+        collider.sharedMaterial = normal;
+    }
+
+
     private void FixedUpdate()
     {
         //CheckGround();
@@ -102,85 +124,121 @@ public class PlayerController : MonoBehaviour
     private void ApplyMovement()
     {
         
-        float scalelevel = Mathf.Log(Mathf.Abs(transform.localScale.x / constants.MonoScale), constants.AllScale);
-        velocity = Quaternion.Euler(0, 0, -constants.Rotoffset * scalelevel) * rb.velocity;
+        //print(Mathf.Abs(transform.localScale.x / constants.MonoScale));
+        
+            float scalelevel = Mathf.Log(Mathf.Abs(transform.localScale.x / constants.MonoScale), constants.AllScale);
+            velocity = Quaternion.Euler(0, 0, -constants.Rotoffset * scalelevel) * rb.velocity;
+        //velocity = Quaternion.Euler(0, 0, 0) * rb.velocity;
+        a = new Vector2(direction.x * k * Mathf.Abs(transform.localScale.x / constants.MonoScale), 0);
+            velocity += a;
+
+        if (direction.x > 0) { faceDir = 1; }
+        else if (direction.x < 0) { faceDir = -1; }
+        transform.localScale = new Vector3(faceDir,1, 1) * Mathf.Abs(transform.localScale.x / constants.MonoScale) * constants.MonoScale;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        
-        if (IsGrounded)
-        {
-            if (direction != Vector2.zero)
+
+            if (GroundDetector.GetComponent<GroundDetect>().IsGrounded && !IsOnSlope)
             {
-                velocity = new Vector2(direction.x * constants.MaxWalkSpeed * Mathf.Abs(transform.localScale.x / constants.MonoScale), velocity.y);
+                if (direction != Vector2.zero)
+                {
+                    velocity = new Vector2(direction.x * constants.MaxWalkSpeed * Mathf.Abs(transform.localScale.x / constants.MonoScale), velocity.y);
+                }
+                //else
+                //{
+
+                //}
             }
-            //else
-            //{
-                
-            //}
-        }
-        
-        else
-        {
-            if (direction != Vector2.zero)
+
+            else if (GroundDetector.GetComponent<GroundDetect>().IsGrounded && IsOnSlope)
             {
-                velocity = new Vector2(direction.x * constants.MaxWalkSpeed * Mathf.Abs(transform.localScale.x / constants.MonoScale), velocity.y);
+                //print("ssssss");
+                if (slopeangle < 0)
+                {
+                    if (direction.x > 0)
+                    {
+                        velocity = new Vector2(direction.x * constants.MaxWalkSpeed * Mathf.Abs(transform.localScale.x / constants.MonoScale), velocity.y);
+                    }
+                }
+                else if (slopeangle > 0)
+                {
+                    if (direction.x < 0)
+                    {
+                        velocity = new Vector2(direction.x * constants.MaxWalkSpeed * Mathf.Abs(transform.localScale.x / constants.MonoScale), velocity.y);
+                    }
+                }
+
             }
             else
             {
-                if (velocity.x > 0)
+                if (direction.x != 0)
                 {
-                    //velocity.x = 3;
+                    if (velocity.x * direction.x > 0) { k = .4f; }
+                    else { k = .8f; }
+                    if (Math.Abs(velocity.x) >= constants.MaxWalkSpeed * Mathf.Abs(transform.localScale.x / constants.MonoScale))
+                    {
+                        velocity.x = constants.MaxWalkSpeed * direction.x * Mathf.Abs(transform.localScale.x / constants.MonoScale);
+                    }
+                    else
+                    {
+
+
+                    }
                 }
+
             }
-        }
             rb.velocity = Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * velocity;
+        
+        
+        
        
     }
 
     //private
-    
-
-    private void SlopeCheck()
+    private void ApplyPhysicsMaterial(string type)
     {
-        //Vector2 pos = new Vector2(0, collider.size.y / 2 * constants.MonoScale);
-        Vector2 pos = transform.position;
-        SlopeCheckVertical(pos);
+        if (type == "OnWall")
+        {
+            collider.sharedMaterial = smooth;
+        }
+        else if (type == "OnGround")
+        {
+            collider.sharedMaterial = normal;
+        }
     }
+
+    
     private void SlopeCheckHorizontal(Vector2 pos)
     {
 
     }
-    private void SlopeCheckVertical(Vector2 pos)
+    
+    private void SlopeCheck(Vector3 normalVector)
     {
-        float scalelevel = Mathf.Log(Mathf.Abs(player.transform.localScale.x / constants.MonoScale), constants.AllScale);
-
-        RaycastHit2D hit = Physics2D.Raycast(pos, Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * Vector2.down, SlopeCheckDistance * constants.MonoScale, GroundLayer);
-        
+        normalVector = normalVector.normalized;
+        //float slopeangle;
+        if (Vector3.Cross(transform.up, normalVector).normalized.z == transform.forward.z)
         {
-            if (hit)
-            {
-                slopeNormalPerp = Vector2.Perpendicular(hit.normal).normalized;
-                //if (hit.normal.)
-                if (Vector3.Cross(transform.up, hit.normal).normalized == -transform.forward)
-                {
-                    slopeangle = Vector2.Angle(hit.normal, Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * Vector2.up) * -1;
-                }
-                else if (Vector3.Cross(transform.up, hit.normal).normalized == transform.forward)
-                {
-                    slopeangle = Vector2.Angle(hit.normal, Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * Vector2.up);
-                }
-                //slopeangle = Vector2.Angle(hit.normal, Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * Vector2.up);
-                Debug.DrawRay(hit.point, hit.normal * 100, Color.green);
-                if (slopeangle != 0)
-                {
-                    IsOnSlope = true;
-
-                }
-                else
-                {
-                    IsOnSlope = false;
-                }
-            }
+            slopeangle = Vector3.Angle(transform.up, normalVector);
         }
+        else if (Vector3.Cross(transform.up, normalVector).normalized.z == -transform.forward.z)
+        {
+            slopeangle = -Vector3.Angle(transform.up, normalVector);
+        }
+        else
+        {
+            slopeangle = 0f;
+        }
+        if (MathF.Abs(slopeangle) > 35)
+        {
+            IsOnSlope = true;
+            collider.sharedMaterial = smooth;
+        }
+        else
+        {
+            IsOnSlope = false;
+            collider.sharedMaterial = normal;
+        }
+        
             
     }
 
@@ -189,7 +247,7 @@ public class PlayerController : MonoBehaviour
         float scalelevel = Mathf.Log(Mathf.Abs(player.transform.localScale.x / constants.MonoScale), constants.AllScale);
         if (GroundDetector.GetComponent<GroundDetect>().IsGrounded)
         {
-            
+            //print(constants.JumpForce * Mathf.Pow(constants.AllScale, scalelevel));
             rb.AddForce(Quaternion.Euler(0, 0, constants.Rotoffset * scalelevel) * Vector2.up * constants.JumpForce * Mathf.Pow(constants.AllScale, scalelevel), ForceMode2D.Impulse);
         }
 
