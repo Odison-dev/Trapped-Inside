@@ -5,30 +5,13 @@ using UnityEngine;
 
 public class CheckIsInABox : MonoBehaviour
 {
-    
-    
-    
-    public GameObject levelcloner;
-    private float timecount;
-    // Start is called before the first frame update
-    private void OnTriggerEnter2D(Collider2D collision)
+
+
+
+    private void Start()
     {
-        if (collision.gameObject.tag == "player")
-        {
-            //levelcloner.GetComponent<LevelCloner>().adb();
-            //timecount = 0;
-        }
-        
+        Physics2D.gravity = Vector2.down * 9.81f;
     }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "player")
-        {
-            //Debug.Log(collision.gameObject.name);
-            levelcloner.GetComponent<LevelCloner>().ads(collision.gameObject);
-        }
-        
-    }
-    
+
 
 }

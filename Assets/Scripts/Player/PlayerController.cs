@@ -1,18 +1,9 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Net.NetworkInformation;
-using Trapped_Inside.Tools.Timer;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor;
 
 //using Trapped_Inside.Constants;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering.VirtualTexturing;
-using static UnityEditor.PlayerSettings;
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -99,7 +90,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("bar") || collision.gameObject.CompareTag("gameobj"))
+        if (collision.gameObject.CompareTag("bar") || collision.gameObject.CompareTag("player"))
         {
             
             Vector3 normal = collision.GetContact(0).normal;
@@ -228,7 +219,7 @@ public class PlayerController : MonoBehaviour
         {
             slopeangle = 0f;
         }
-        if (MathF.Abs(slopeangle) > 35)
+        if (MathF.Abs(slopeangle) > 45)
         {
             IsOnSlope = true;
             collider.sharedMaterial = smooth;

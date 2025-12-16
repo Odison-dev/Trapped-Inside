@@ -25,7 +25,7 @@ public class Key : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.name == "Circle")
+        if (collision.gameObject.tag == "player")
         {
             got = true;
             StartCoroutine(CollectedBehaviours());
@@ -40,9 +40,9 @@ public class Key : MonoBehaviour
         boxCollider.enabled = false;
         audioDefination.PlayAudio();
         //spriteRenderer.enabled = false;
-        sequence.Append(transform.DOScaleY(.1f, .3f));
-        sequence.Append(transform.DOScaleX(.1f, .4f));
-        yield return new WaitForSeconds(1f);
+        sequence.Append(transform.DOScaleY(0f, .3f));
+        sequence.Append(transform.DOScaleX(0f, .4f));
+        yield return new WaitForSeconds(.7f);
         Destroy(gameObject);
         yield return null;
     }

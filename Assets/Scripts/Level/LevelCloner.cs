@@ -40,7 +40,7 @@ public class LevelCloner : MonoBehaviour
     public GameObject clone_s;
     //private GameObject key_s;
     private GameObject player_b;
-    public GameObject clone_b;
+    //public GameObject clone_b;
     //private GameObject key_b;
     //GameObject player_s = Instantiate(Player);
 
@@ -61,22 +61,25 @@ public class LevelCloner : MonoBehaviour
         //player_b.GetComponent<Rigidbody2D>().isKinematic = true;
 
         clone_s = Instantiate(Level.gameObject);
-        clone_b = Instantiate(Level.gameObject);
+        //clone_b = Instantiate(Level.gameObject);
         SceneManager.MoveGameObjectToScene(clone_s, gameObject.scene);
-        SceneManager.MoveGameObjectToScene(clone_b, gameObject.scene);
+        //SceneManager.MoveGameObjectToScene(clone_b, gameObject.scene);
 
 
-        
+
         //key_s = Instantiate(Key);
         //SceneManager.MoveGameObjectToScene(key_s, gameObject.scene);
         //key_b = Instantiate(Key);
         //SceneManager.MoveGameObjectToScene(key_b, gameObject.scene);
+        //Physics2D.gravity = Vector2.down;
+        //print(Physics2D.gravity);
+        Physics2D.gravity = Vector2.down * 9.81f;
 
-
-        RenderCube = GameObject.Find("Renderer");
+        //RenderCube = GameObject.Find("Renderer");
         CloneLevel();
         
-        PlaceRenderCube();
+        if (RenderCube != null) { PlaceRenderCube();}
+        
         
     }
     private void Update()
@@ -104,7 +107,7 @@ public class LevelCloner : MonoBehaviour
 
         //´óºÅ¹Ø¿¨¿ËÂ¡
         //GameObject clone_b = Instantiate(Level.gameObject);
-        TransformGameobj("upper", clone_b.transform, Level.transform);
+        //TransformGameobj("upper", clone_b.transform, Level.transform);
     }
 
     private void ClonePlayer()
@@ -165,6 +168,17 @@ public class LevelCloner : MonoBehaviour
         gameObject.GetComponent<Rigidbody2D>().gravityScale /= scale;
         Physics2D.gravity = Quaternion.Euler(0, 0, -RotOffset.z) * Physics2D.gravity;
     }
+    //public void adb(GameObject gameObject)
+    //{
+    //    GameObject newGameObject = Instantiate(gameObject);
+    //    newGameObject.name = "Circle";
+    //    //newGameObject.transform.position = gameObject.transform.position;
+    //    Destroy(gameObject);
+    //    TransformGameobj("upper", newGameObject.transform, newGameObject.transform);
+    //    newGameObject.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, -RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity / scale;
+    //    newGameObject.GetComponent<Rigidbody2D>().gravityScale /= scale;
+    //    Physics2D.gravity = Quaternion.Euler(0, 0, -RotOffset.z) * Physics2D.gravity;
+    //}
     public void ads(GameObject gameObject)
     {
         TransformGameobj("lower", gameObject.transform, gameObject.transform);
@@ -172,7 +186,18 @@ public class LevelCloner : MonoBehaviour
         gameObject.GetComponent<Rigidbody2D>().gravityScale *= scale;
         Physics2D.gravity = Quaternion.Euler(0, 0, RotOffset.z) * Physics2D.gravity;
     }
-
+    //public void ads(GameObject gameObject)
+    //{
+    //    GameObject newGameObject = Instantiate(gameObject);
+    //    newGameObject.name = "Circle";
+    //    //newGameObject.transform.position = gameObject.transform.position;
+    //    Destroy(gameObject);
+    //    Player = newGameObject;
+    //    TransformGameobj("lower", newGameObject.transform, newGameObject.transform);
+    //    newGameObject.GetComponent<Rigidbody2D>().velocity = Quaternion.Euler(0, 0, RotOffset.z) * Player.GetComponent<Rigidbody2D>().velocity * scale;
+    //    newGameObject.GetComponent<Rigidbody2D>().gravityScale *= scale;
+    //    Physics2D.gravity = Quaternion.Euler(0, 0, RotOffset.z) * Physics2D.gravity;
+    //}
 
     private bool IsInSmall()
     {

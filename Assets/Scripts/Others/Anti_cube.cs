@@ -18,9 +18,9 @@ public class Anti_cube : MonoBehaviour
 
     private void Awake()
     {
-        cs = Instantiate(gameObject);
+        //cs = Instantiate(gameObject);
         //SceneManager.MoveGameObjectToScene(cs, gameObject.scene);
-        cb = Instantiate(gameObject);
+        //cb = Instantiate(gameObject);
         //SceneManager.MoveGameObjectToScene(cb, gameObject.scene);
         constants = c.GetComponent<Consts>();
         collider = GetComponent<BoxCollider2D>();
@@ -46,7 +46,7 @@ public class Anti_cube : MonoBehaviour
 
     private void FixedUpdate()
     {
-        CloneBoxes();
+        //CloneBoxes();
         float scalelevel = Mathf.Log(Mathf.Abs(transform.localScale.x / constants.MonoScale), constants.AllScale);
         
     }

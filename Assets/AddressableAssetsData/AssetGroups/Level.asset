@@ -22,8 +22,28 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1650ce5c33fb1b24e8331e2d4af4b49c
+    m_Address: Assets/Prefabs/GameObject
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1df338abb0392bc4792e212d7e404c7c
     m_Address: Level
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4ab8f0a6ec025c14a8071368c6ef783e
+    m_Address: Assets/Prefabs/Anims
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 988170f999a46694f821905e3aaf380f
+    m_Address: Assets/Prefabs/Particles
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a5325c9336e8da14caf069fd6540cf1b
+    m_Address: Assets/Prefabs/Others
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
