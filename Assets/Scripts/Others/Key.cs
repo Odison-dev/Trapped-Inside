@@ -39,11 +39,12 @@ public class Key : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
         boxCollider.enabled = false;
         audioDefination.PlayAudio();
+        print("mm beans");
         //spriteRenderer.enabled = false;
         sequence.Append(transform.DOScaleY(0f, .3f));
         sequence.Append(transform.DOScaleX(0f, .4f));
         yield return new WaitForSeconds(.7f);
-        Destroy(gameObject);
+        //Destroy(gameObject);
         yield return null;
     }
 }

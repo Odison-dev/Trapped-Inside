@@ -1976,7 +1976,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 1266813154}
   consts: {fileID: 1269857144}
-  m: 0.03
+  m: 0.015
 --- !u!1 &1269857144
 GameObject:
   m_ObjectHideFlags: 0

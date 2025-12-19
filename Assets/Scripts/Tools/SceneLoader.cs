@@ -71,7 +71,7 @@ public class SceneLoader : MonoBehaviour
 
         if (currentLoadedScene != null)
         {
-            Debug.Log("xxx");
+            //Debug.Log("xxx");
             StartCoroutine(UnloadPreviousScene());
         }
         else
@@ -99,7 +99,7 @@ public class SceneLoader : MonoBehaviour
     private void LoadNewScene()
     {
 
-        Debug.Log(sceneToLoad);
+        
         var loadingOption = sceneToLoad.sceneReference.LoadSceneAsync(LoadSceneMode.Additive, true);
         loadingOption.Completed += OnLoadCompleted;
     }

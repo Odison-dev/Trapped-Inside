@@ -25,7 +25,7 @@ public class Door : MonoBehaviour
 
     private void Update()
     {
-        print(open);
+        
         if (targetKey.GetComponent<Key>().got)
         {
             open = true;
@@ -39,7 +39,6 @@ public class Door : MonoBehaviour
             if (open)
             {
                 audioDefination.PlayAudio();
-                print("sss");
                 StartCoroutine(Unlocked());
                 StopCoroutine(Unlocked());
             }

@@ -7,7 +7,7 @@ public class tempCam : MonoBehaviour
     public Camera cam;
     public GameObject consts;
     private float k = 0;
-    public float m = .5f;
+    public float m = .015f;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,9 +22,15 @@ public class tempCam : MonoBehaviour
         if (cam.orthographicSize <= 5 * consts.GetComponent<Consts>().AllScale)
         {
             //cam.orthographicSize = 5;
-            cam.transform.eulerAngles -= new Vector3(0, 0, consts.GetComponent<Consts>().Rotoffset);
-            k = 0;
+            temp();
             
         }
+    }
+
+
+    private void temp()
+    {
+        cam.transform.eulerAngles -= new Vector3(0, 0, consts.GetComponent<Consts>().Rotoffset);
+        k = 0;
     }
 }
